@@ -21,3 +21,4 @@ wheels/
 # Logs and temporary data
 *.log
 storage/data/
+backend/downloaded_test/
