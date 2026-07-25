@@ -44,3 +44,57 @@
     - *Logic/Target*: Connect using `LabelStudio` client with API key from settings and list projects and tasks.
     - *Why*: Verify integration with Label Studio annotation service.
     - *Verification*: **[AUTONOMOUS]** Run `uv run python label_studio_test.py` from `backend`.
+
+## Phase 6: Workspace Cleanup & Documentation Sync
+- [x] **Task 6.1**: Rename directory `untils` to `utils`
+    - *File*: [dir_utils.py](file:///c:/eco/friday/utils/dir_utils.py), [logging_utils.py](file:///c:/eco/friday/utils/logging_utils.py)
+    - *Logic/Target*: Move `dir_utils.py` and `logging_utils.py` from `untils` to `utils` and remove empty `untils` directory.
+    - *Why*: Fix the typo directory name `untils` to standard name `utils`.
+    - *Verification*: **[AUTONOMOUS]** Run Powershell command to test path existence of `utils/` and non-existence of `untils/`.
+- [x] **Task 6.2**: Delete empty/unused folders `frontend` and `worker` at workspace root
+    - *File*: [frontend](file:///c:/eco/friday/frontend), [worker](file:///c:/eco/friday/worker)
+    - *Logic/Target*: Remove the empty directories `frontend` and `worker` from the root workspace directory.
+    - *Why*: Remove clutter and keep the workspace tidy.
+    - *Verification*: **[AUTONOMOUS]** Run command to verify `frontend/` and `worker/` folders do not exist.
+- [x] **Task 6.3**: Update README.md files
+    - *File*: [README.md](file:///c:/eco/friday/README.md), [backend/README.md](file:///c:/eco/friday/backend/README.md), [storage/artifacts/README.md](file:///c:/eco/friday/storage/artifacts/README.md)
+    - *Logic/Target*: Replace empty README files with comprehensive project and sub-module descriptions.
+    - *Why*: Keep project documentation clear, clean, and helpful.
+    - *Verification*: **[AUTONOMOUS]** Read README files and check their content length and formatting.
+- [x] **Task 6.4**: Update architecture.md
+    - *File*: [architecture.md](file:///c:/eco/friday/architecture.md)
+    - *Logic/Target*: Update the directory structure ASCII tree and description to list the actual complete directory setup (`backend/`, `storage/`, `overview/`, `utils/`).
+    - *Why*: Align architecture documentation with current actual workspace structure.
+    - *Verification*: **[AUTONOMOUS]** View `architecture.md` and check the updated directory structure.
+
+## Phase 7: Work1 Integration
+- [x] **Task 7.1**: Move Docker Compose file to workspace root
+    - *File*: [compose.yml](file:///c:/eco/friday/compose.yml)
+    - *Logic/Target*: Move `work1/compose.yml` to root workspace.
+    - *Why*: Centralize Docker configuration for the entire project workspace.
+    - *Verification*: **[AUTONOMOUS]** Verify path existence of `compose.yml`.
+- [x] **Task 7.2**: Move diagrams to `overview/`
+    - *File*: [overview.drawio](file:///c:/eco/friday/overview/overview.drawio), [overview.png](file:///c:/eco/friday/overview/overview.png)
+    - *Logic/Target*: Move `work1/diagrams/overview.drawio` and `overview.png` to `overview/`.
+    - *Why*: Consolidate all system diagrams.
+    - *Verification*: **[AUTONOMOUS]** Verify path existence of files in `overview/`.
+- [x] **Task 7.3**: Move report artifacts to `storage/artifacts/`
+    - *File*: [Assignment1_Submission_Checklist.docx](file:///c:/eco/friday/storage/artifacts/Assignment1_Submission_Checklist.docx), [6710110589.pdf](file:///c:/eco/friday/storage/artifacts/6710110589.pdf)
+    - *Logic/Target*: Move document artifacts to `storage/artifacts/`.
+    - *Why*: Store all output reports in a central storage area.
+    - *Verification*: **[AUTONOMOUS]** Verify path existence of files in `storage/artifacts/`.
+- [x] **Task 7.4**: Move Python scripts to `backend/sandbox/`
+    - *File*: [db_test_assignment1.py](file:///c:/eco/friday/backend/sandbox/db_test_assignment1.py), [report_generator_assignment1.py](file:///c:/eco/friday/backend/sandbox/report_generator_assignment1.py)
+    - *Logic/Target*: Move `work1/db_test.py` to `backend/sandbox/db_test_assignment1.py` and `work1/report_generator.py` to `backend/sandbox/report_generator_assignment1.py`.
+    - *Why*: Prevent pollution of Assignment 3 backend directory, while preserving the previous work's sandbox scripts.
+    - *Verification*: **[AUTONOMOUS]** Run `uv run python backend/sandbox/db_test_assignment1.py` to verify it compiles and runs.
+- [x] **Task 7.5**: Cleanup redundant `work1` directory and local files
+    - *File*: [work1](file:///c:/eco/friday/work1)
+    - *Logic/Target*: Delete shortcut, readme, and the empty directory `work1`.
+    - *Why*: Delete the messy folder and keep the main workspace clean.
+    - *Verification*: **[AUTONOMOUS]** Verify `work1/` does not exist.
+- [x] **Task 7.6**: Update root README.md and architecture.md
+    - *File*: [README.md](file:///c:/eco/friday/README.md), [architecture.md](file:///c:/eco/friday/architecture.md)
+    - *Logic/Target*: Add details about Assignment 1 components and update the ASCII directory tree.
+    - *Why*: Align documentation with the new integrated project structure.
+    - *Verification*: **[AUTONOMOUS]** View files and check updated contents.

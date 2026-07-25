@@ -12,3 +12,12 @@ wheels/
 # Environment variables
 .env
 *.env
+
+# Documents and reports
+*.docx
+*.pdf
+*.lnk
+
+# Logs and temporary data
+*.log
+storage/data/
