@@ -5,24 +5,24 @@ class AIService:
     def __init__(self):
         self.model_name = "Qwen-3B-Local"
 
-    async def generate_response(self, prompt: str, max_tokens: int, temperature: float) -> dict:
+    async def generate_response(self, prompt: str, max_tokens: int, temperature: float):
         start_time = time.time()
-        # Rule-based / local LLM simulation
-        await asyncio.sleep(0.5)
-        generated_text = f"Simulated response for: {prompt}"
+        # Mocking processing
+        await asyncio.sleep(1)
+        generated_text = f"Response to: {prompt} (Rule-based & {self.model_name})"
         execution_time_ms = (time.time() - start_time) * 1000
-        tokens_used = len(generated_text.split())
+        tokens_used = len(prompt.split()) + len(generated_text.split())
         return {
             "generated_text": generated_text,
             "execution_time_ms": execution_time_ms,
             "tokens_used": tokens_used,
             "model_name": self.model_name
         }
-
+    
     async def stream_response(self, prompt: str):
-        # Simulated streaming
-        words = f"Streaming response for {prompt}...".split()
+        # Mocking SSE streaming
+        words = f"Response to {prompt} from {self.model_name}".split()
         for word in words:
-            await asyncio.sleep(0.1)
             yield f"data: {word}\n\n"
+            await asyncio.sleep(0.2)
         yield "data: [DONE]\n\n"

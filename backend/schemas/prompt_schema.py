@@ -3,9 +3,9 @@ from typing import Optional
 
 class PromptGenerateRequest(BaseModel):
     prompt: str
-    max_tokens: int = 512
-    temperature: float = 0.7
-    stream: bool = False
+    max_tokens: Optional[int] = 512
+    temperature: Optional[float] = 0.7
+    stream: Optional[bool] = False
 
 class PromptGenerateResponse(BaseModel):
     generated_text: str

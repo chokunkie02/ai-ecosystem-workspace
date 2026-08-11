@@ -1,1 +1,93 @@
+services:
+  # MinIO S3-Compatible Object Storage Container
+  minio:
+    image: minio/minio:latest
+    container_name: ai_minio
+    command: server /data --console-address ":9001"
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    volumes:
+      - minio_data:/data
+    healthcheck:
+      test: ["CMD", "mc", "ready", "local"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - ai_ecosystem_net
 
+  # Redis In-Memory Data Store & Cache Container
+  redis:
+    image: redis:7-alpine
+    container_name: ai_redis
+    ports:
+      - "6379:6379"
+    command: redis-server --save 60 1 --loglevel notice
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    networks:
+      - ai_ecosystem_net
+
+  # Label Studio Data Annotation Platform Container
+  label_studio:
+    image: heartexlabs/label-studio:latest
+    container_name: ai_label_studio
+    ports:
+      - "8080:8080"
+    environment:
+      LABEL_STUDIO_LOCAL_FILES_SERVING_ENABLED: "true"
+      LABEL_STUDIO_DISABLE_SIGNUP_WITHOUT_LINK: "true"
+      LABEL_STUDIO_USERNAME: "admin@example.com"
+      LABEL_STUDIO_PASSWORD: "adminpassword"
+    volumes:
+      - label_studio_data:/label-studio/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+    networks:
+      - ai_ecosystem_net
+
+  # PostgreSQL Database Container
+  postgres:
+    image: postgres:16-alpine
+    container_name: ai_postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: ai_ecosystem
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - ai_ecosystem_net
+
+volumes:
+  minio_data:
+    driver: local
+  redis_data:
+    driver: local
+  label_studio_data:
+    driver: local
+  postgres_data:
+    driver: local
+
+networks:
+  ai_ecosystem_net:
+    driver: bridge

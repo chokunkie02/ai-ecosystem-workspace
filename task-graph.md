@@ -1,100 +1,103 @@
-# Assignment 3 Task Graph: Backend Setup & Services Integration (Work #1 - Work #5)
+# Monorepo Project Task Graph & Execution Plan
 
-## Phase 1: Work #1 - Project Virtual Environment & Dependencies
-- [x] **Task 1.1**: Initialize `uv` project inside `backend/` and create `.gitignore`
-    - *File*: [pyproject.toml](file:///c:/eco/friday/backend/pyproject.toml), [.gitignore](file:///c:/eco/friday/backend/.gitignore)
-    - *Logic/Target*: Run `uv init` in `backend` directory and create `.gitignore` to exclude `.venv/`, `__pycache__/`, `*.pyc`, `.env`.
-    - *Why*: To create the isolated Python environment and manage project dependencies.
-    - *Verification*: **[AUTONOMOUS]** Run `uv run python --version` and check `.gitignore` content.
-- [x] **Task 1.2**: Install required packages using `uv add`
-    - *File*: [pyproject.toml](file:///c:/eco/friday/backend/pyproject.toml), [uv.lock](file:///c:/eco/friday/backend/uv.lock)
-    - *Logic/Target*: Run `uv add pydantic-settings arq sqlalchemy psycopg2-binary asyncpg label-studio-sdk python-dotenv` in `backend`.
-    - *Why*: To install dependencies required for settings, ARQ, PostgreSQL, and Label Studio.
-    - *Verification*: **[AUTONOMOUS]** Inspect `pyproject.toml` dependencies block.
+> [!NOTE]
+> Living task graph and execution plan for the AI Ecosystem Monorepo. All tasks follow the strict 5-part schema: Task ID, File, Logic/Target, Why, and Verification.
 
-## Phase 2: Work #2 - Project Settings
-- [x] **Task 2.1**: Create `.env` file in `backend/`
-    - *File*: [.env](file:///c:/eco/friday/backend/.env)
-    - *Logic/Target*: Write Redis, Postgres, and Label Studio configurations.
-    - *Why*: Centralize environment configuration for pydantic-settings.
-    - *Verification*: **[AUTONOMOUS]** Verify `.env` file exists and contains expected keys.
-- [x] **Task 2.2**: Create `core/config.py` with Settings class and `sandbox/test_settings.py`
-    - *File*: [config.py](file:///c:/eco/friday/backend/core/config.py), [test_settings.py](file:///c:/eco/friday/backend/sandbox/test_settings.py)
-    - *Logic/Target*: Implement `Settings(BaseSettings)` reading `.env` and test script to print `settings.model_dump()`.
-    - *Why*: Validate Pydantic Settings configuration reading.
-    - *Verification*: **[AUTONOMOUS]** Run `uv run python -m sandbox.test_settings` from `backend`.
+## Phase 1: Monorepo Foundation & Workspace Setup
+- [x] **Task 1.1**: Monorepo Directory Tree Structure Setup
+    - *File*: [apps/](file:///c:/eco/friday/apps/), [libs/](file:///c:/eco/friday/libs/), [workers/](file:///c:/eco/friday/workers/), [scripts/](file:///c:/eco/friday/scripts/), [docs/](file:///c:/eco/friday/docs/)
+    - *Logic/Target*: Create all primary monorepo directories: `apps/time_series`, `apps/non_time_series`, `libs/minio_client`, `libs/redis_client`, `libs/arq_client`, `libs/label_studio`, `workers/timeseries_worker`, `workers/nontimeseries_worker`, `scripts`, `docs`.
+    - *Why*: Establish a modular monorepo structure separating application APIs, shared clients, async background workers, tools, and documentation.
+    - *Verification*: **[AUTONOMOUS]** Check path existence for all 10 subdirectories.
+- [x] **Task 1.2**: Module-Level Documentation Initializer
+    - *File*: [apps/time_series/README.md](file:///c:/eco/friday/apps/time_series/README.md), [apps/non_time_series/README.md](file:///c:/eco/friday/apps/non_time_series/README.md), [libs/minio_client/README.md](file:///c:/eco/friday/libs/minio_client/README.md), [libs/redis_client/README.md](file:///c:/eco/friday/libs/redis_client/README.md), [libs/arq_client/README.md](file:///c:/eco/friday/libs/arq_client/README.md), [libs/label_studio/README.md](file:///c:/eco/friday/libs/label_studio/README.md), [workers/timeseries_worker/README.md](file:///c:/eco/friday/workers/timeseries_worker/README.md), [workers/nontimeseries_worker/README.md](file:///c:/eco/friday/workers/nontimeseries_worker/README.md), [scripts/README.md](file:///c:/eco/friday/scripts/README.md), [README.md](file:///c:/eco/friday/README.md)
+    - *Logic/Target*: Create comprehensive README.md files for every app, library client, worker, script, and root directory detailing responsibilities, architecture, and developer jobs.
+    - *Why*: Provide clear technical guidelines and documentation standards across all monorepo modules.
+    - *Verification*: **[AUTONOMOUS]** Inspect existence and non-empty status of all generated README.md files.
+- [x] **Task 1.3**: Complete Task Graph Blueprint Update
+    - *File*: [task-graph.md](file:///c:/eco/friday/task-graph.md)
+    - *Logic/Target*: Write detailed 7-phase implementation roadmap adhering strictly to the 5-part schema (Task ID, File, Logic/Target, Why, Verification).
+    - *Why*: Serve as the master living plan and tracking document for all developer and sub-agent tasks.
+    - *Verification*: **[AUTONOMOUS]** Validate structure and schema completeness of `task-graph.md`.
 
-## Phase 3: Work #3 - Redis + ARQ
-- [x] **Task 3.1**: Create `worker_settings.py` and `enqueue.py`
-    - *File*: [worker_settings.py](file:///c:/eco/friday/backend/worker_settings.py), [enqueue.py](file:///c:/eco/friday/backend/enqueue.py)
-    - *Logic/Target*: Define `simple_work` and `WorkerSettings` in `worker_settings.py`, and `create_pool` job enqueuing in `enqueue.py`.
-    - *Why*: Establish background task queue processing with ARQ & Redis.
-    - *Verification*: **[AUTONOMOUS]** Run worker and test enqueue script against Redis.
+## Phase 2: Core Libraries Implementation (`libs/`)
+- [ ] **Task 2.1**: Implement MinIO Object Storage Client
+    - *File*: [libs/minio_client/client.py](file:///c:/eco/friday/libs/minio_client/client.py)
+    - *Logic/Target*: Build asynchronous MinIO wrapper supporting bucket creation, object uploads (binary streams, images, CSVs), presigned URLs, and download streams.
+    - *Why*: Centralize S3-compatible object storage access for raw IoT data, images, and ML model checkpoints.
+    - *Verification*: **[AUTONOMOUS]** Run unit tests connecting to local MinIO container to upload/download test payload.
+- [ ] **Task 2.2**: Implement Redis Caching & State Client
+    - *File*: [libs/redis_client/client.py](file:///c:/eco/friday/libs/redis_client/client.py)
+    - *Logic/Target*: Develop Redis client helper with automatic connection pooling, key prefix management, time-series cache setters/getters, and JSON serialization.
+    - *Why*: Provide high-performance caching for frequent telemetry queries, prediction outputs, and worker job statuses.
+    - *Verification*: **[AUTONOMOUS]** Run integration test verifying set/get operations with expiration logic against Redis.
+- [ ] **Task 2.3**: Implement ARQ Queue Task Dispatcher Client
+    - *File*: [libs/arq_client/dispatcher.py](file:///c:/eco/friday/libs/arq_client/dispatcher.py)
+    - *Logic/Target*: Implement helper for background job enqueueing, task status tracking, and worker connection configuration.
+    - *Why*: Decouple API response cycles from heavy ML worker computations (Prophet, LSTM, ResNet-18).
+    - *Verification*: **[AUTONOMOUS]** Execute test enqueue script and verify task entry in Redis ARQ queue.
+- [ ] **Task 2.4**: Implement Label Studio Integration SDK Wrapper
+    - *File*: [libs/label_studio/client.py](file:///c:/eco/friday/libs/label_studio/client.py)
+    - *Logic/Target*: Implement Label Studio client for project creation, task import (X-ray images, sensor metrics), and annotation export parsing.
+    - *Why*: Automate data annotation workflows for human-in-the-loop ML model training and validation.
+    - *Verification*: **[AUTONOMOUS]** Test API authentication, list active projects, and create dummy annotation task.
 
-## Phase 4: Work #4 - PostgreSQL CRUD
-- [x] **Task 4.1**: Create `postgres_test.py`
-    - *File*: [postgres_test.py](file:///c:/eco/friday/backend/postgres_test.py)
-    - *Logic/Target*: Implement SQLAlchemy engine and CRUD operations (create_table, insert_data, update_data, delete_data, drop_table) for `students` table.
-    - *Why*: Verify database connection and schema manipulation.
-    - *Verification*: **[AUTONOMOUS]** Run `uv run python postgres_test.py` from `backend`.
+## Phase 3: Asynchronous Background Workers (`workers/`)
+- [ ] **Task 3.1**: Implement Time-Series ML Worker (Prophet / LSTM)
+    - *File*: [workers/timeseries_worker/worker.py](file:///c:/eco/friday/workers/timeseries_worker/worker.py)
+    - *Logic/Target*: Construct ARQ background tasks for forecasting IoT telemetry data using Facebook Prophet and LSTM neural network models. Write inference output back to MinIO/PostgreSQL.
+    - *Why*: Process compute-heavy time-series forecasting asynchronously without blocking FastAPI HTTP endpoints.
+    - *Verification*: **[AUTONOMOUS]** Enqueue sample time-series dataset job and verify predicted values are saved to storage.
+- [ ] **Task 3.2**: Implement Non-Time-Series Computer Vision Worker (ResNet-18)
+    - *File*: [workers/nontimeseries_worker/worker.py](file:///c:/eco/friday/workers/nontimeseries_worker/worker.py)
+    - *Logic/Target*: Construct ARQ worker processing image/X-ray classification using PyTorch ResNet-18 model. Fetch image from MinIO, run inference, and return labels.
+    - *Why*: Provide scalable async image processing and classification pipelines for non-time-series domain.
+    - *Verification*: **[AUTONOMOUS]** Enqueue test image inference task and confirm classification output labels and confidence scores.
 
-## Phase 5: Work #5 - Label Studio SDK
-- [x] **Task 5.1**: Create `label_studio_test.py`
-    - *File*: [label_studio_test.py](file:///c:/eco/friday/backend/label_studio_test.py)
-    - *Logic/Target*: Connect using `LabelStudio` client with API key from settings and list projects and tasks.
-    - *Why*: Verify integration with Label Studio annotation service.
-    - *Verification*: **[AUTONOMOUS]** Run `uv run python label_studio_test.py` from `backend`.
+## Phase 4: FastAPI Applications (`apps/`)
+- [ ] **Task 4.1**: Implement Time-Series FastAPI Web Service
+    - *File*: [apps/time_series/main.py](file:///c:/eco/friday/apps/time_series/main.py)
+    - *Logic/Target*: Build FastAPI application exposing endpoints for sensor data ingestion, forecasting job submission, and historical telemetry retrieval.
+    - *Why*: Serve as the primary API interface for IoT device integration and time-series analytics dashboards.
+    - *Verification*: **[AUTONOMOUS]** Run FastAPI service with uvicorn and execute HTTP requests to `/health` and `/api/v1/forecast`.
+- [ ] **Task 4.2**: Implement Non-Time-Series FastAPI Web Service
+    - *File*: [apps/non_time_series/main.py](file:///c:/eco/friday/apps/non_time_series/main.py)
+    - *Logic/Target*: Build FastAPI application for uploading medical X-ray / general image datasets, dispatching classification worker tasks, and fetching Label Studio annotations.
+    - *Why*: Serve as the dedicated API service for image analysis workflows.
+    - *Verification*: **[AUTONOMOUS]** Post multipart image upload request to `/api/v1/classify` and verify response task_id.
 
-## Phase 6: Workspace Cleanup & Documentation Sync
-- [x] **Task 6.1**: Rename directory `untils` to `utils`
-    - *File*: [dir_utils.py](file:///c:/eco/friday/utils/dir_utils.py), [logging_utils.py](file:///c:/eco/friday/utils/logging_utils.py)
-    - *Logic/Target*: Move `dir_utils.py` and `logging_utils.py` from `untils` to `utils` and remove empty `untils` directory.
-    - *Why*: Fix the typo directory name `untils` to standard name `utils`.
-    - *Verification*: **[AUTONOMOUS]** Run Powershell command to test path existence of `utils/` and non-existence of `untils/`.
-- [x] **Task 6.2**: Delete empty/unused folders `frontend` and `worker` at workspace root
-    - *File*: [frontend](file:///c:/eco/friday/frontend), [worker](file:///c:/eco/friday/worker)
-    - *Logic/Target*: Remove the empty directories `frontend` and `worker` from the root workspace directory.
-    - *Why*: Remove clutter and keep the workspace tidy.
-    - *Verification*: **[AUTONOMOUS]** Run command to verify `frontend/` and `worker/` folders do not exist.
-- [x] **Task 6.3**: Update README.md files
-    - *File*: [README.md](file:///c:/eco/friday/README.md), [backend/README.md](file:///c:/eco/friday/backend/README.md), [storage/artifacts/README.md](file:///c:/eco/friday/storage/artifacts/README.md)
-    - *Logic/Target*: Replace empty README files with comprehensive project and sub-module descriptions.
-    - *Why*: Keep project documentation clear, clean, and helpful.
-    - *Verification*: **[AUTONOMOUS]** Read README files and check their content length and formatting.
-- [x] **Task 6.4**: Update architecture.md
-    - *File*: [architecture.md](file:///c:/eco/friday/architecture.md)
-    - *Logic/Target*: Update the directory structure ASCII tree and description to list the actual complete directory setup (`backend/`, `storage/`, `overview/`, `utils/`).
-    - *Why*: Align architecture documentation with current actual workspace structure.
-    - *Verification*: **[AUTONOMOUS]** View `architecture.md` and check the updated directory structure.
+## Phase 5: Automation Tools & Utility Scripts (`scripts/`)
+- [x] **Task 5.1**: Implement OpenAPI to Excel Generator Script
+    - *File*: [scripts/openapi_to_excel.py](file:///c:/eco/friday/scripts/openapi_to_excel.py)
+    - *Logic/Target*: Create CLI script utilizing openpyxl / pandas to fetch OpenAPI schema (`openapi.json`) from FastAPI applications and export structured Excel spreadsheet documentation (Endpoints, Method, Parameters, Requests, Responses).
+    - *Why*: Automate developer and client documentation generation directly from API source code.
+    - *Verification*: **[AUTONOMOUS]** Execute `python scripts/openapi_to_excel.py` against running app and verify `.xlsx` report output.
+- [ ] **Task 5.2**: Implement Integration Seed & Utility Scripts
+    - *File*: [scripts/seed_data.py](file:///c:/eco/friday/scripts/seed_data.py)
+    - *Logic/Target*: Develop script to seed initial MinIO buckets, PostgreSQL database tables, and sample dataset files.
+    - *Why*: Facilitate quick environment initialization and automated testing setup.
+    - *Verification*: **[AUTONOMOUS]** Run seed script and verify created buckets and initial DB rows.
 
-## Phase 7: Work1 Integration
-- [x] **Task 7.1**: Move Docker Compose file to workspace root
+## Phase 6: Infrastructure Orchestration & Environment Configuration
+- [x] **Task 6.1**: Update Docker Compose & Multi-Container Setup
     - *File*: [compose.yml](file:///c:/eco/friday/compose.yml)
-    - *Logic/Target*: Move `work1/compose.yml` to root workspace.
-    - *Why*: Centralize Docker configuration for the entire project workspace.
-    - *Verification*: **[AUTONOMOUS]** Verify path existence of `compose.yml`.
-- [x] **Task 7.2**: Move diagrams to `overview/`
-    - *File*: [overview.drawio](file:///c:/eco/friday/overview/overview.drawio), [overview.png](file:///c:/eco/friday/overview/overview.png)
-    - *Logic/Target*: Move `work1/diagrams/overview.drawio` and `overview.png` to `overview/`.
-    - *Why*: Consolidate all system diagrams.
-    - *Verification*: **[AUTONOMOUS]** Verify path existence of files in `overview/`.
-- [x] **Task 7.3**: Move report artifacts to `storage/artifacts/`
-    - *File*: [Assignment1_Submission_Checklist.docx](file:///c:/eco/friday/storage/artifacts/Assignment1_Submission_Checklist.docx), [6710110589.pdf](file:///c:/eco/friday/storage/artifacts/6710110589.pdf)
-    - *Logic/Target*: Move document artifacts to `storage/artifacts/`.
-    - *Why*: Store all output reports in a central storage area.
-    - *Verification*: **[AUTONOMOUS]** Verify path existence of files in `storage/artifacts/`.
-- [x] **Task 7.4**: Move Python scripts to `backend/sandbox/`
-    - *File*: [db_test_assignment1.py](file:///c:/eco/friday/backend/sandbox/db_test_assignment1.py), [report_generator_assignment1.py](file:///c:/eco/friday/backend/sandbox/report_generator_assignment1.py)
-    - *Logic/Target*: Move `work1/db_test.py` to `backend/sandbox/db_test_assignment1.py` and `work1/report_generator.py` to `backend/sandbox/report_generator_assignment1.py`.
-    - *Why*: Prevent pollution of Assignment 3 backend directory, while preserving the previous work's sandbox scripts.
-    - *Verification*: **[AUTONOMOUS]** Run `uv run python backend/sandbox/db_test_assignment1.py` to verify it compiles and runs.
-- [x] **Task 7.5**: Cleanup redundant `work1` directory and local files
-    - *File*: [work1](file:///c:/eco/friday/work1)
-    - *Logic/Target*: Delete shortcut, readme, and the empty directory `work1`.
-    - *Why*: Delete the messy folder and keep the main workspace clean.
-    - *Verification*: **[AUTONOMOUS]** Verify `work1/` does not exist.
-- [x] **Task 7.6**: Update root README.md and architecture.md
-    - *File*: [README.md](file:///c:/eco/friday/README.md), [architecture.md](file:///c:/eco/friday/architecture.md)
-    - *Logic/Target*: Add details about Assignment 1 components and update the ASCII directory tree.
-    - *Why*: Align documentation with the new integrated project structure.
-    - *Verification*: **[AUTONOMOUS]** View files and check updated contents.
+    - *Logic/Target*: Configure containers for PostgreSQL, Redis, MinIO, Label Studio, Time-Series Worker, Non-Time-Series Worker, and FastAPI apps with healthchecks and network bridges.
+    - *Why*: Orchestrate the complete AI ecosystem infrastructure in a single unified Docker Compose environment.
+    - *Verification*: **[AUTONOMOUS]** Run `docker compose up -d` and verify all service containers are healthy.
+- [ ] **Task 6.2**: Standardize Environment Variable Settings
+    - *File*: [.env.example](file:///c:/eco/friday/.env.example), [backend/core/config.py](file:///c:/eco/friday/backend/core/config.py)
+    - *Logic/Target*: Consolidate all configuration environment keys across apps, workers, and clients with Pydantic Settings validation.
+    - *Why*: Ensure secure, unified environment handling across development, testing, and production.
+    - *Verification*: **[AUTONOMOUS]** Test configuration loading across different sub-modules.
+
+## Phase 7: End-to-End Integration, Verification & System Documentation
+- [ ] **Task 7.1**: End-to-End Integration Testing
+    - *File*: [docs/integration_test.py](file:///c:/eco/friday/docs/integration_test.py)
+    - *Logic/Target*: Create integration test suite verifying full flow: API upload -> MinIO -> Redis/ARQ Worker -> ML inference -> Label Studio / Database storage.
+    - *Why*: Ensure system reliability and inter-module communication integrity.
+    - *Verification*: **[AUTONOMOUS]** Execute integration test suite and verify 100% pass rate.
+- [ ] **Task 7.2**: Final System Documentation & Architecture Update
+    - *File*: [architecture.md](file:///c:/eco/friday/architecture.md), [README.md](file:///c:/eco/friday/README.md), [docs/api_spec.xlsx](file:///c:/eco/friday/docs/api_spec.xlsx)
+    - *Logic/Target*: Update full monorepo architecture diagram, directory layout docs, and generate API Excel documentation.
+    - *Why*: Maintain accurate, production-grade documentation for the entire AI ecosystem monorepo.
+    - *Verification*: **[AUTONOMOUS]** Review documentation completeness and file links.

@@ -1,8 +1,10 @@
 from pydantic_settings import BaseSettings
 
 class Settings(BaseSettings):
-    project_name: str = "FastAPI & AI Ecosystem Skeleton API"
-    version: str = "1.0.0"
+    PROJECT_NAME: str = "AI API"
+    SECRET_KEY: str = "secret"
+    ALGORITHM: str = "HS256"
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
 
     class Config:
         env_file = ".env"

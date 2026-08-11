@@ -1,0 +1,561 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Time-Series Analytics & Forecasting API",
+    "description": "Microservice for IoT telemetry data ingestion, Prophet/LSTM model training, Label Studio task sync, and ARQ background job dispatching.",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/health": {
+      "get": {
+        "tags": [
+          "Storage"
+        ],
+        "summary": "Service Health Check",
+        "description": "Check operational status of the Time-Series API service.",
+        "operationId": "health_check_health_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/store/telemetry": {
+      "post": {
+        "tags": [
+          "Storage"
+        ],
+        "summary": "Store Telemetry Data",
+        "description": "Ingest sensor telemetry data points. Uploads raw dataset to MinIO bucket and updates Redis cache.",
+        "operationId": "store_telemetry_api_v1_store_telemetry_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TelemetryIngestRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/store/telemetry/{sensor_id}": {
+      "get": {
+        "tags": [
+          "Storage"
+        ],
+        "summary": "Get Cached Telemetry",
+        "description": "Retrieve stored telemetry data points for a given sensor ID from Redis cache.",
+        "operationId": "get_telemetry_api_v1_store_telemetry__sensor_id__get",
+        "parameters": [
+          {
+            "name": "sensor_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Sensor Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/ls/sync-project": {
+      "post": {
+        "tags": [
+          "Label Studio"
+        ],
+        "summary": "Sync Label Studio Project",
+        "description": "Create or synchronize a Label Studio project designed for time-series telemetry labeling.",
+        "operationId": "sync_label_studio_project_api_v1_ls_sync_project_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LabelStudioSyncRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/ls/tasks": {
+      "post": {
+        "tags": [
+          "Label Studio"
+        ],
+        "summary": "Create Label Studio Tasks",
+        "description": "Convert sensor telemetry data into Label Studio annotation tasks and import into project.",
+        "operationId": "create_label_studio_tasks_api_v1_ls_tasks_post",
+        "parameters": [
+          {
+            "name": "project_id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Project Id"
+            }
+          },
+          {
+            "name": "sensor_id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Sensor Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/jobs/forecast": {
+      "post": {
+        "tags": [
+          "Jobs"
+        ],
+        "summary": "Enqueue Forecasting Job",
+        "description": "Enqueue a background ARQ task to execute Prophet/LSTM time-series forecasting.",
+        "operationId": "enqueue_forecast_job_api_v1_jobs_forecast_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ForecastJobRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/jobs/{job_id}": {
+      "get": {
+        "tags": [
+          "Jobs"
+        ],
+        "summary": "Get Job Status",
+        "description": "Retrieve current execution status and results for a queued or completed ARQ job.",
+        "operationId": "get_job_status_api_v1_jobs__job_id__get",
+        "parameters": [
+          {
+            "name": "job_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Job Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/analytics/summary": {
+      "get": {
+        "tags": [
+          "Analytics"
+        ],
+        "summary": "Get Telemetry Analytics Summary",
+        "description": "Calculate summary statistics (mean, min, max, std) for a given sensor telemetry dataset.",
+        "operationId": "get_analytics_summary_api_v1_analytics_summary_get",
+        "parameters": [
+          {
+            "name": "sensor_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "sensor-001",
+              "title": "Sensor Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/analytics/train": {
+      "post": {
+        "tags": [
+          "Analytics"
+        ],
+        "summary": "Enqueue Model Training",
+        "description": "Enqueue background job to train Prophet/LSTM model on specified time-series dataset.",
+        "operationId": "train_model_api_v1_analytics_train_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TrainJobRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "ForecastJobRequest": {
+        "properties": {
+          "sensor_id": {
+            "type": "string",
+            "title": "Sensor Id",
+            "example": "sensor-001"
+          },
+          "horizon": {
+            "type": "integer",
+            "maximum": 100.0,
+            "minimum": 1.0,
+            "title": "Horizon",
+            "default": 10,
+            "example": 10
+          },
+          "data_points": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/TelemetryPoint"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Data Points"
+          }
+        },
+        "type": "object",
+        "required": [
+          "sensor_id"
+        ],
+        "title": "ForecastJobRequest"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "LabelStudioSyncRequest": {
+        "properties": {
+          "project_title": {
+            "type": "string",
+            "title": "Project Title",
+            "default": "Sensor Anomaly Detection",
+            "example": "Sensor Anomaly Detection"
+          },
+          "description": {
+            "type": "string",
+            "title": "Description",
+            "default": "Time-series telemetry anomaly annotation",
+            "example": "Time-series telemetry anomaly annotation"
+          }
+        },
+        "type": "object",
+        "title": "LabelStudioSyncRequest"
+      },
+      "TelemetryIngestRequest": {
+        "properties": {
+          "sensor_id": {
+            "type": "string",
+            "title": "Sensor Id",
+            "example": "sensor-001"
+          },
+          "data_points": {
+            "items": {
+              "$ref": "#/components/schemas/TelemetryPoint"
+            },
+            "type": "array",
+            "title": "Data Points"
+          }
+        },
+        "type": "object",
+        "required": [
+          "sensor_id",
+          "data_points"
+        ],
+        "title": "TelemetryIngestRequest"
+      },
+      "TelemetryPoint": {
+        "properties": {
+          "timestamp": {
+            "type": "string",
+            "title": "Timestamp",
+            "example": "2026-08-12T00:00:00Z"
+          },
+          "value": {
+            "type": "number",
+            "title": "Value",
+            "example": 42.5
+          }
+        },
+        "type": "object",
+        "required": [
+          "timestamp",
+          "value"
+        ],
+        "title": "TelemetryPoint"
+      },
+      "TrainJobRequest": {
+        "properties": {
+          "dataset_id": {
+            "type": "string",
+            "title": "Dataset Id",
+            "example": "ds-telemetry-v1"
+          },
+          "model_type": {
+            "type": "string",
+            "title": "Model Type",
+            "default": "prophet",
+            "example": "prophet"
+          },
+          "epochs": {
+            "type": "integer",
+            "title": "Epochs",
+            "default": 50,
+            "example": 50
+          }
+        },
+        "type": "object",
+        "required": [
+          "dataset_id"
+        ],
+        "title": "TrainJobRequest"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "ctx": {
+            "type": "object",
+            "title": "Context"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "Storage",
+      "description": "Endpoints for raw sensor telemetry ingestion, Redis caching, and MinIO object storage."
+    },
+    {
+      "name": "Label Studio",
+      "description": "Integration with Label Studio REST API for project creation and task annotation export."
+    },
+    {
+      "name": "Jobs",
+      "description": "Dispatch and track ARQ background forecasting and training workers."
+    },
+    {
+      "name": "Analytics",
+      "description": "Statistical summary and model performance analytics for time-series data."
+    }
+  ]
+}

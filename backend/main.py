@@ -1,8 +1,9 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from routers.ai_router import ai_router
+from core.config import settings
 
-app = FastAPI(title="AI LLM Inference API")
+app = FastAPI(title=settings.PROJECT_NAME)
 
 app.add_middleware(
     CORSMiddleware,
@@ -15,5 +16,5 @@ app.add_middleware(
 app.include_router(ai_router)
 
 @app.get("/")
-async def root():
-    return {"message": "Welcome to AI LLM Inference API"}
+def read_root():
+    return {"Hello": "World"}

@@ -8,16 +8,16 @@ ai_router = APIRouter(prefix="/api/v1/ai", tags=["AI Engine"])
 ai_service = AIService()
 
 @ai_router.post("/generate", response_model=PromptGenerateResponse)
-async def generate(request: PromptGenerateRequest, user=Depends(get_current_user)):
-    result = await ai_service.generate_response(
+async def generate(request: PromptGenerateRequest, current_user: str = Depends(get_current_user)):
+    response = await ai_service.generate_response(
         prompt=request.prompt,
         max_tokens=request.max_tokens,
         temperature=request.temperature
     )
-    return PromptGenerateResponse(**result)
+    return PromptGenerateResponse(**response)
 
 @ai_router.get("/stream")
-async def stream(prompt: str, user=Depends(get_current_user)):
+async def stream(prompt: str, current_user: str = Depends(get_current_user)):
     return StreamingResponse(
         ai_service.stream_response(prompt), 
         media_type="text/event-stream"

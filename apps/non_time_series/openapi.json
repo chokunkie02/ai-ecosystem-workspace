@@ -1,0 +1,533 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Computer Vision Image Detection & Classification Service",
+    "description": "Microservice for general image storage, object detection, image classification, Label Studio annotation sync, ARQ background vision jobs, and analytics.",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/health": {
+      "get": {
+        "tags": [
+          "Storage"
+        ],
+        "summary": "Service Health Check",
+        "description": "Check operational status of the Computer Vision Image Detection & Classification Service.",
+        "operationId": "health_check_health_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/store/upload-image": {
+      "post": {
+        "tags": [
+          "Storage"
+        ],
+        "summary": "Upload Image",
+        "description": "Upload a general image to MinIO object storage for detection and classification.",
+        "operationId": "upload_image_api_v1_store_upload_image_post",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_upload_image_api_v1_store_upload_image_post"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ImageUploadResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/store/images/{image_id}": {
+      "get": {
+        "tags": [
+          "Storage"
+        ],
+        "summary": "Get Image Metadata & URL",
+        "description": "Retrieve stored image metadata and active presigned S3 download URL.",
+        "operationId": "get_image_api_v1_store_images__image_id__get",
+        "parameters": [
+          {
+            "name": "image_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Image Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/ls/create-project": {
+      "post": {
+        "tags": [
+          "Label Studio"
+        ],
+        "summary": "Create Label Studio Vision Project",
+        "description": "Create a Label Studio project configured with RectangleLabels bounding boxes for object detection.",
+        "operationId": "create_label_studio_vision_project_api_v1_ls_create_project_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VisionLabelStudioProjectRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/ls/annotations/{project_id}": {
+      "get": {
+        "tags": [
+          "Label Studio"
+        ],
+        "summary": "Fetch Project Annotations",
+        "description": "Fetch annotated image tasks and bounding box labels from Label Studio project.",
+        "operationId": "get_project_annotations_api_v1_ls_annotations__project_id__get",
+        "parameters": [
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Project Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/jobs/inference": {
+      "post": {
+        "tags": [
+          "Jobs"
+        ],
+        "summary": "Enqueue Vision Inference Job",
+        "description": "Enqueue a background ARQ task to perform general image object detection and classification inference.",
+        "operationId": "enqueue_inference_job_api_v1_jobs_inference_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InferenceJobRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/jobs/{job_id}": {
+      "get": {
+        "tags": [
+          "Jobs"
+        ],
+        "summary": "Get Job Status",
+        "description": "Retrieve current status and classification outputs for a queued or completed vision job.",
+        "operationId": "get_job_status_api_v1_jobs__job_id__get",
+        "parameters": [
+          {
+            "name": "job_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Job Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/analytics/image-stats": {
+      "get": {
+        "tags": [
+          "Analytics"
+        ],
+        "summary": "Get Vision Analytics Metrics",
+        "description": "Get aggregated analytics metrics for processed general images, object detection counts, and average confidence.",
+        "operationId": "get_image_stats_api_v1_analytics_image_stats_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/analytics/batch-evaluate": {
+      "post": {
+        "tags": [
+          "Analytics"
+        ],
+        "summary": "Trigger Batch Evaluation",
+        "description": "Enqueue background job to perform batch object detection and classification evaluation across multiple images.",
+        "operationId": "batch_evaluate_api_v1_analytics_batch_evaluate_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BatchInferenceRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "BatchInferenceRequest": {
+        "properties": {
+          "batch_id": {
+            "type": "string",
+            "title": "Batch Id",
+            "example": "batch-2026-001"
+          },
+          "image_keys": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Image Keys",
+            "example": [
+              "img1.jpg",
+              "img2.jpg"
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "batch_id",
+          "image_keys"
+        ],
+        "title": "BatchInferenceRequest"
+      },
+      "Body_upload_image_api_v1_store_upload_image_post": {
+        "properties": {
+          "file": {
+            "type": "string",
+            "contentMediaType": "application/octet-stream",
+            "title": "File"
+          },
+          "image_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Image Id"
+          }
+        },
+        "type": "object",
+        "required": [
+          "file"
+        ],
+        "title": "Body_upload_image_api_v1_store_upload_image_post"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "ImageUploadResponse": {
+        "properties": {
+          "image_id": {
+            "type": "string",
+            "title": "Image Id"
+          },
+          "bucket": {
+            "type": "string",
+            "title": "Bucket"
+          },
+          "object_key": {
+            "type": "string",
+            "title": "Object Key"
+          },
+          "presigned_url": {
+            "type": "string",
+            "title": "Presigned Url"
+          }
+        },
+        "type": "object",
+        "required": [
+          "image_id",
+          "bucket",
+          "object_key",
+          "presigned_url"
+        ],
+        "title": "ImageUploadResponse"
+      },
+      "InferenceJobRequest": {
+        "properties": {
+          "image_id": {
+            "type": "string",
+            "title": "Image Id",
+            "example": "img-cv-001"
+          },
+          "image_bucket": {
+            "type": "string",
+            "title": "Image Bucket",
+            "default": "general-images",
+            "example": "general-images"
+          },
+          "object_key": {
+            "type": "string",
+            "title": "Object Key",
+            "default": "sample_image.jpg",
+            "example": "sample_image.jpg"
+          }
+        },
+        "type": "object",
+        "required": [
+          "image_id"
+        ],
+        "title": "InferenceJobRequest"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "ctx": {
+            "type": "object",
+            "title": "Context"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      },
+      "VisionLabelStudioProjectRequest": {
+        "properties": {
+          "project_title": {
+            "type": "string",
+            "title": "Project Title",
+            "default": "General Image Detection & Classification",
+            "example": "General Image Detection & Classification"
+          },
+          "description": {
+            "type": "string",
+            "title": "Description",
+            "default": "Bounding box annotation and object detection for general images",
+            "example": "Bounding box annotation"
+          }
+        },
+        "type": "object",
+        "title": "VisionLabelStudioProjectRequest"
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "Storage",
+      "description": "Image upload, object storage management in MinIO, and presigned URL generation."
+    },
+    {
+      "name": "Label Studio",
+      "description": "Integration with Label Studio REST API for general computer vision tasks and annotations."
+    },
+    {
+      "name": "Jobs",
+      "description": "Dispatch and track ARQ background vision inference workers (ResNet-18 model pipeline)."
+    },
+    {
+      "name": "Analytics",
+      "description": "Classification statistics, confidence distribution metrics, and model evaluation."
+    }
+  ]
+}

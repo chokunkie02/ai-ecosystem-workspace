@@ -1,44 +1,88 @@
-# AI Ecosystem Workspace
+# AI Ecosystem Monorepo Workspace
 
-ยินดีต้อนรับสู่โครงการศึกษาและพัฒนาระบบ AI Ecosystem ในลักษณะครบวงจร (Full-Stack/Integration) 
-โปรเจกต์นี้ได้รับการตั้งค่าเป็น **UV Workspace** เพื่อรองรับการจัดการ Dependencies และโมดูลย่อยต่าง ๆ อย่างรวดเร็วและเป็นระเบียบ
+ยินดีต้อนรับสู่โปรเจกต์ **AI Ecosystem Monorepo Architecture** ที่รวมการบริหารจัดการระบบประมวลผลข้อมูลอนุกรมเวลา (Time-Series / IoT Sensors Data) และข้อมูลภาพถ่ายรังสีทางการแพทย์ (Non-Time-Series / Medical X-Ray Image Classification) พร้อมระบบ Data Annotation และ Background Task Processing ในสถาปัตยกรรมระดับองค์กร
 
-## โครงสร้างโปรเจกต์ (Project Structure)
+---
 
-- `backend/` — โมดูลหลักสำหรับโค้ดฝั่งระบบหลังบ้าน ประกอบด้วย:
-  - การจัดการ Settings ด้วย `pydantic-settings`
-  - การรัน Task แบบ Background (Queue) ด้วย Redis และ ARQ
-  - การทำ CRUD กับฐานข้อมูล PostgreSQL ด้วย SQLAlchemy
-  - การเรียกใช้ SDK ของ Label Studio
-  - `sandbox/` — แหล่งรวบรวมสคริปต์ทดสอบ และสคริปต์จาก Assignment 1 (เช่น `db_test_assignment1.py` และ `report_generator_assignment1.py`)
-- `overview/` — ไดอะแกรมอธิบายภาพรวมสถาปัตยกรรมระบบ (`overview.drawio`, `overview.png`)
-- `storage/` — โฟลเดอร์เก็บข้อมูลประเภทต่าง ๆ:
-  - `artifacts/` — แหล่งรวมผลลัพธ์การทดสอบและเอกสารรายงานส่งงานต่างๆ ของ Assignment 1 และ Assignment 3
-  - `data/` — ข้อมูลสำหรับการจัดเก็บหรือทดสอบระบบ
-  - `log/` — ล็อกไฟล์จาก Docker และ Server
-- `utils/` — ฟังก์ชันและยูทิลิตี้เสริมต่าง ๆ (เช่น helper สำหรับจัดการไดเรกทอรีและ logging)
-- `compose.yml` — ไฟล์ Docker Compose สำหรับสร้างคอนเทนเนอร์ Redis, PostgreSQL และ Label Studio สำหรับโปรเจกต์
+## โครงสร้างสถาปัตยกรรม Monorepo (Monorepo Directory Structure)
 
-## วิธีการใช้งาน (Getting Started)
+```text
+├── apps/                          # แอปพลิเคชันฝั่งหลังบ้าน (FastAPI Services)
+│   ├── time_series/               # API Service สำหรับข้อมูลอนุกรมเวลา (IoT/Sensors Telemetry)
+│   │   └── README.md
+│   └── non_time_series/           # API Service สำหรับข้อมูลภาพถ่ายทางการแพทย์ (Image/X-Ray)
+│       └── README.md
+│
+├── libs/                          # Shared Libraries & Client SDK Wrappers
+│   ├── minio_client/              # MinIO Object Storage SDK Client (S3 Storage)
+│   │   └── README.md
+│   ├── redis_client/              # Redis Cache & Task Status Client
+│   │   └── README.md
+│   ├── arq_client/                # ARQ Async Task Queue Dispatcher Client
+│   │   └── README.md
+│   └── label_studio/              # Label Studio Data Annotation SDK Wrapper
+│       └── README.md
+│
+├── workers/                       # Asynchronous ML/DL Background Workers
+│   ├── timeseries_worker/         # Worker ประมวลผลโมเดล Prophet / PyTorch LSTM
+│   │   └── README.md
+│   └── nontimeseries_worker/      # Worker ประมวลผลโมเดล PyTorch ResNet-18 Image Classification
+│       └── README.md
+│
+├── scripts/                       # Automation Utilities & Tools
+│   ├── openapi_to_excel.py        # สคริปต์แปลง OpenAPI (Swagger JSON) เป็น Excel Documentation (.xlsx)
+│   └── README.md
+│
+├── docs/                          # เอกสารสถาปัตยกรรม รายงานผล และ API Excel Spreadsheets
+│
+├── backend/                       # Legacy Backend Core & Configuration Workspace
+├── overview/                      # ภาพรวมสถาปัตยกรรมระบบ (Draw.io / Diagram PNG)
+├── storage/                       # แหล่งเก็บข้อมูลดิบและ Artifacts
+├── compose.yml                    # Docker Compose Orchestration (PostgreSQL, Redis, MinIO, Label Studio)
+├── task-graph.md                  # Master Plan & Living Execution Graph (7 Phases)
+├── architecture.md                # เอกสารสถาปัตยกรรมระบบโดยละเอียด
+└── pyproject.toml                 # UV Workspace Configuration
+```
 
-### ความต้องการของระบบ (Prerequisites)
-- [Python >= 3.12](https://www.python.org/)
-- [UV](https://github.com/astral-sh/uv) (เครื่องมือจัดการโปรเจกต์ Python)
-- Docker & Docker Compose
+---
 
-### การติดตั้งและใช้งาน
+## ระบบย่อยและส่วนประกอบหลัก (Core System Components)
 
-1. **เตรียมฐานข้อมูลและบริการต่างๆ (Docker Setup):**
-   รัน Docker Compose เพื่อเปิดใช้งานระบบ Redis, PostgreSQL และ Label Studio:
-   ```bash
-   docker compose up -d
-   ```
+1. **FastAPI Applications (`apps/`)**:
+   - `apps/time_series`: ให้บริการ REST API รับข้อมูลจากเซนเซอร์ IoT, ดึงกราฟประวัติย้อนหลัง และสั่งรัน Prophet/LSTM Forecasting
+   - `apps/non_time_series`: ให้บริการ REST API สำหรับอัปโหลดภาพถ่าย X-Ray, สั่งรัน ResNet-18 Classification และซิงก์ข้อมูลกับ Label Studio
 
-2. **ติดตั้ง Dependencies:**
-   ทำผ่านระบบ Workspace ที่รูทโปรเจกต์:
-   ```bash
-   uv sync
-   ```
+2. **Shared Libraries (`libs/`)**:
+   - `libs/minio_client`: บริหารจัดการการอัปโหลด/ดาวน์โหลดไฟล์ไบนารีและรูปภาพขนาดใหญ่กับ MinIO S3 Object Storage
+   - `libs/redis_client`: ระบบ Caching ความเร็วสูง เก็บแคชการพยากรณ์และสถานะการทำงานของ Worker
+   - `libs/arq_client`: ส่งงานประมวลผลขนาดใหญ่เข้าคิว ARQ Redis แบบ Asynchronous
+   - `libs/label_studio`: สื่อสารกับ Label Studio เพื่อนำภาพเข้ากระบวนการ Labeling และดึง Annotations ออกมา Retrain
 
-3. **การสั่งรันและทดสอบระบบย่อยฝั่ง Backend:**
-   กรุณาดูรายละเอียดการเรียกใช้งานสคริปต์ทดสอบระบบต่าง ๆ (เช่น PostgreSQL CRUD, ARQ Worker, Label Studio SDK) ได้ใน [backend/README.md](file:///c:/eco/friday/backend/README.md)
+3. **Background Workers (`workers/`)**:
+   - `workers/timeseries_worker`: ประมวลผลทำนายแนวโน้มด้วย Facebook Prophet และ PyTorch LSTM
+   - `workers/nontimeseries_worker`: ประมวลผลวิเคราะห์และจำแนกรูปภาพด้วย PyTorch ResNet-18
+
+4. **Automation Tools (`scripts/`)**:
+   - `scripts/openapi_to_excel.py`: แปลง OpenAPI Schema เป็นรายงาน Excel ให้อัตโนมัติ
+
+---
+
+## ขั้นตอนการติดตั้งและการใช้งาน (Getting Started)
+
+### 1. ความต้องการของระบบ (Prerequisites)
+- Python `>= 3.12`
+- [UV Project & Package Manager](https://github.com/astral-sh/uv)
+- Docker Desktop / Docker Compose
+
+### 2. การเริ่มต้นระบบ (Environment Setup)
+```bash
+# 1. ติดตั้ง Dependencies และสร้าง Virtual Environment แบบ Workspace
+uv sync
+
+# 2. เปิดใช้งาน Container ทั้งหมด (PostgreSQL, Redis, MinIO, Label Studio)
+docker compose up -d
+```
+
+### 3. ตรวจสอบสถานะการทำงาน
+- **Task Graph Roadmap**: สามารถดูแผนการดำเนินงานและสถานะงานได้ใน [task-graph.md](file:///c:/eco/friday/task-graph.md)
+- **Architecture Spec**: ศึกษาผังและกระบวนการทำงานได้ใน [architecture.md](file:///c:/eco/friday/architecture.md)

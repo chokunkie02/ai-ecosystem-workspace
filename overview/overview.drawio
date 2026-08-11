@@ -1,194 +1,202 @@
 <mxfile host="65bd71144e">
     <diagram id="ai-ecosystem-overview" name="System Overview">
-        <mxGraphModel dx="1000" dy="700" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1200" pageHeight="850" math="0" shadow="0">
+        <mxGraphModel dx="917" dy="1010" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1750" pageHeight="900" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
-                
-                <!-- Docker Container Cluster Frame (Background) -->
-                <mxCell id="docker_frame" value="docker" style="rounded=1;dashed=1;fillColor=none;strokeColor=#4A90E2;fontColor=#4A90E2;fontStyle=1;verticalAlign=top;align=left;spacingLeft=10;spacingTop=5;fontSize=14;" vertex="1" parent="1">
-                    <mxGeometry x="50" y="10" width="810" height="560" as="geometry"/>
+                <mxCell id="user_icon" value="" style="html=1;verticalLabelPosition=bottom;align=center;labelBackgroundColor=#ffffff;verticalAlign=top;strokeWidth=2;strokeColor=#0080F0;shadow=0;dashed=0;shape=mxgraph.ios7.icons.user;" parent="1" vertex="1">
+                    <mxGeometry x="85" y="45" width="30" height="30" as="geometry"/>
                 </mxCell>
-                
-                <!-- Vertices Inside Docker -->
-                <mxCell id="fastapi_server" value="FastAPI Server" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontStyle=1;" vertex="1" parent="1">
-                    <mxGeometry x="80" y="260" width="140" height="70" as="geometry"/>
+                <mxCell id="end_user" value="End User" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#666666;arcSize=40;fontStyle=1;fontSize=13;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="80" width="120" height="40" as="geometry"/>
                 </mxCell>
-                
-                <mxCell id="redis_server" value="Redis Server" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#f8cecc;strokeColor=#b85450;fontStyle=1;" vertex="1" parent="1">
-                    <mxGeometry x="360" y="40" width="120" height="80" as="geometry"/>
+                <mxCell id="inference_channel" value="Inference Channel" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;fontSize=13;" parent="1" vertex="1">
+                    <mxGeometry x="200" y="70" width="160" height="60" as="geometry"/>
                 </mxCell>
-                
-                <mxCell id="label_studio" value="Label Studio" style="shape=hexagon;perimeter=hexagonPerimeter2;whiteSpace=wrap;html=1;fixedSize=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;" vertex="1" parent="1">
-                    <mxGeometry x="360" y="190" width="120" height="80" as="geometry"/>
+                <mxCell id="admin_icon" value="" style="shadow=0;dashed=0;html=1;strokeColor=none;fillColor=#4495D1;labelPosition=center;verticalLabelPosition=bottom;verticalAlign=top;align=center;outlineConnect=0;shape=mxgraph.veeam.portal_admin;" parent="1" vertex="1">
+                    <mxGeometry x="78" y="485" width="44" height="48" as="geometry"/>
                 </mxCell>
-                
-                <mxCell id="sqlalchemy" value="SqlAlchemy" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;" vertex="1" parent="1">
-                    <mxGeometry x="360" y="340" width="120" height="60" as="geometry"/>
+                <mxCell id="admin" value="Admin" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#666666;arcSize=40;fontStyle=1;fontSize=13;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="540" width="120" height="40" as="geometry"/>
                 </mxCell>
-                
-                <mxCell id="postgresql" value="PostgreSQL Database" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#ffe6cc;strokeColor=#d79b00;fontStyle=1;" vertex="1" parent="1">
-                    <mxGeometry x="360" y="470" width="120" height="80" as="geometry"/>
+                <mxCell id="management_channel" value="Management Channel" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontStyle=1;fontSize=13;" parent="1" vertex="1">
+                    <mxGeometry x="200" y="530" width="160" height="60" as="geometry"/>
                 </mxCell>
-                
-                <!-- Job Worker Overlapping Cards Stack -->
-                <mxCell id="job_worker_bg2" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
-                    <mxGeometry x="700" y="40" width="140" height="80" as="geometry"/>
+                <mxCell id="docker_frame" value="docker" style="rounded=1;dashed=1;fillColor=none;strokeColor=#4A90E2;fontColor=#4A90E2;fontStyle=1;verticalAlign=top;align=left;spacingLeft=10;spacingTop=5;fontSize=14;strokeWidth=2;" parent="1" vertex="1">
+                    <mxGeometry x="560" y="30" width="880" height="640" as="geometry"/>
                 </mxCell>
-                <mxCell id="job_worker_bg1" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
-                    <mxGeometry x="690" y="50" width="140" height="80" as="geometry"/>
+                <mxCell id="central_api" value="Central API Server" style="shape=hexagon;perimeter=hexagonPerimeter2;whiteSpace=wrap;html=1;fixedSize=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontStyle=1;fontSize=13;" parent="1" vertex="1">
+                    <mxGeometry x="590" y="290" width="150" height="100" as="geometry"/>
                 </mxCell>
-                <mxCell id="job_worker" value="Job Worker #01&#xa;(Inferencer)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;" vertex="1" parent="1">
-                    <mxGeometry x="680" y="60" width="140" height="80" as="geometry"/>
+                <mxCell id="redis_server" value="Redis Server" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#f8cecc;strokeColor=#b85450;fontStyle=1;fontSize=13;" parent="1" vertex="1">
+                    <mxGeometry x="820" y="70" width="130" height="90" as="geometry"/>
                 </mxCell>
-                
-                <mxCell id="minio" value="MinIO" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontStyle=1;" vertex="1" parent="1">
-                    <mxGeometry x="680" y="240" width="120" height="60" as="geometry"/>
+                <mxCell id="postgresql" value="PostgreSQL Database" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#ffe6cc;strokeColor=#d79b00;fontStyle=1;fontSize=13;" parent="1" vertex="1">
+                    <mxGeometry x="820" y="520" width="130" height="90" as="geometry"/>
                 </mxCell>
-                
-                <!-- Training Worker Overlapping Cards Stack -->
-                <mxCell id="training_worker_bg2" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
-                    <mxGeometry x="700" y="380" width="140" height="80" as="geometry"/>
+                <mxCell id="label_studio" value="Annotated Database,&#xa;Label Studio, etc." style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;fontSize=13;" parent="1" vertex="1">
+                    <mxGeometry x="1160" y="515" width="160" height="100" as="geometry"/>
                 </mxCell>
-                <mxCell id="training_worker_bg1" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
-                    <mxGeometry x="690" y="390" width="140" height="80" as="geometry"/>
+                <mxCell id="job_worker_bg2" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" parent="1" vertex="1">
+                    <mxGeometry x="1080" y="70" width="150" height="80" as="geometry"/>
                 </mxCell>
-                <mxCell id="training_worker" value="Training Worker #01" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontStyle=1;" vertex="1" parent="1">
-                    <mxGeometry x="680" y="400" width="140" height="80" as="geometry"/>
+                <mxCell id="job_worker_bg1" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" parent="1" vertex="1">
+                    <mxGeometry x="1070" y="80" width="150" height="80" as="geometry"/>
                 </mxCell>
-                
-                <!-- Vertices Outside Docker -->
-                <mxCell id="model_storage" value="Model Storage" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#f5f5f5;strokeColor=#666666;fontColor=#333333;fontStyle=1;" vertex="1" parent="1">
-                    <mxGeometry x="920" y="100" width="100" height="80" as="geometry"/>
+                <mxCell id="job_worker" value="Job Worker Stack&#xa;(Inferencer)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;fontSize=13;" parent="1" vertex="1">
+                    <mxGeometry x="1060" y="90" width="150" height="80" as="geometry"/>
                 </mxCell>
-                
-                <mxCell id="brains_box" value="Trained Models" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontColor=#333333;fontStyle=1;" vertex="1" parent="1">
-                    <mxGeometry x="920" y="290" width="120" height="60" as="geometry"/>
+                <mxCell id="training_worker_bg2" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" parent="1" vertex="1">
+                    <mxGeometry x="1280" y="70" width="150" height="80" as="geometry"/>
                 </mxCell>
-                
-                <!-- Edges / Connections -->
-                <!-- FastAPI Server to Redis Server (ARQ) with Waypoints -->
-                <mxCell id="e1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;startArrow=none;" edge="1" parent="1" source="fastapi_server" target="redis_server">
+                <mxCell id="training_worker_bg1" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" parent="1" vertex="1">
+                    <mxGeometry x="1270" y="80" width="150" height="80" as="geometry"/>
+                </mxCell>
+                <mxCell id="training_worker" value="Training Worker Stack" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontStyle=1;fontSize=13;" parent="1" vertex="1">
+                    <mxGeometry x="1260" y="90" width="150" height="80" as="geometry"/>
+                </mxCell>
+                <mxCell id="brains_box" value="Trained Models" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontColor=#333333;fontStyle=1;fontSize=14;align=center;verticalAlign=middle;" parent="1" vertex="1">
+                    <mxGeometry x="1490" y="280" width="160" height="100" as="geometry"/>
+                </mxCell>
+                <mxCell id="e_user_inf" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=classic;startArrow=classic;strokeWidth=1.5;strokeColor=#4A90E2;" parent="1" source="end_user" target="inference_channel" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e_inf_api" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=classic;startArrow=classic;strokeWidth=1.5;strokeColor=#82b366;" parent="1" source="inference_channel" target="central_api" edge="1">
                     <mxGeometry relative="1" as="geometry">
-                        <mxPoint as="sourcePoint"/>
-                        <mxPoint as="targetPoint"/>
                         <Array as="points">
-                            <mxPoint x="280" y="295"/>
-                            <mxPoint x="280" y="80"/>
+                            <mxPoint x="460" y="100"/>
+                            <mxPoint x="460" y="320"/>
                         </Array>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="e1_label" value="ARQ" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];labelBackgroundColor=#ffffff;labelBorderColor=#B3B3B3;fontStyle=1;" vertex="1" connectable="0" parent="e1">
-                    <mxGeometry x="0.1" relative="1" as="geometry">
+                <mxCell id="e_inf_api_label" value="HTTP / REST" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];labelBackgroundColor=#ffffff;labelBorderColor=none;fontStyle=1;fontSize=11;" parent="e_inf_api" vertex="1" connectable="0">
+                    <mxGeometry relative="1" as="geometry">
                         <mxPoint as="offset"/>
                     </mxGeometry>
                 </mxCell>
-                
-                <!-- FastAPI Server to SqlAlchemy with Waypoints -->
-                <mxCell id="e2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;startArrow=none;" edge="1" parent="1" source="fastapi_server" target="sqlalchemy">
+                <mxCell id="e_admin_mgmt" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=classic;startArrow=classic;strokeWidth=1.5;strokeColor=#4A90E2;" parent="1" source="admin" target="management_channel" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e_mgmt_api" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=classic;startArrow=classic;strokeWidth=1.5;strokeColor=#d79b00;" parent="1" source="management_channel" target="central_api" edge="1">
                     <mxGeometry relative="1" as="geometry">
                         <Array as="points">
-                            <mxPoint x="280" y="295"/>
-                            <mxPoint x="280" y="370"/>
+                            <mxPoint x="460" y="560"/>
+                            <mxPoint x="460" y="360"/>
                         </Array>
                     </mxGeometry>
                 </mxCell>
-                
-                <!-- FastAPI Server to Label Studio with Waypoints -->
-                <mxCell id="e3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;startArrow=none;" edge="1" parent="1" source="fastapi_server" target="label_studio">
+                <mxCell id="e_mgmt_api_label" value="HTTP / REST" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];labelBackgroundColor=#ffffff;labelBorderColor=none;fontStyle=1;fontSize=11;" parent="e_mgmt_api" vertex="1" connectable="0">
                     <mxGeometry relative="1" as="geometry">
-                        <Array as="points">
-                            <mxPoint x="280" y="295"/>
-                            <mxPoint x="280" y="230"/>
-                        </Array>
-                    </mxGeometry>
-                </mxCell>
-                
-                <!-- Redis Server to Job Worker (ARQ) with Waypoints -->
-                <mxCell id="e4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;startArrow=none;" edge="1" parent="1" source="redis_server" target="job_worker">
-                    <mxGeometry relative="1" as="geometry">
-                        <Array as="points">
-                            <mxPoint x="580" y="80"/>
-                            <mxPoint x="580" y="100"/>
-                        </Array>
-                    </mxGeometry>
-                </mxCell>
-                <mxCell id="e4_label" value="ARQ" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];labelBackgroundColor=#ffffff;labelBorderColor=#B3B3B3;fontStyle=1;" vertex="1" connectable="0" parent="e4">
-                    <mxGeometry x="0.1" relative="1" as="geometry">
                         <mxPoint as="offset"/>
                     </mxGeometry>
                 </mxCell>
-                
-                <!-- Redis Server to Training Worker (ARQ) with Waypoints -->
-                <mxCell id="e5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;startArrow=none;" edge="1" parent="1" source="redis_server" target="training_worker">
+                <mxCell id="e_api_redis" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=classic;startArrow=classic;strokeWidth=1.5;strokeColor=#b85450;" parent="1" source="central_api" target="redis_server" edge="1">
                     <mxGeometry relative="1" as="geometry">
                         <Array as="points">
-                            <mxPoint x="540" y="80"/>
-                            <mxPoint x="540" y="440"/>
+                            <mxPoint x="770" y="320"/>
+                            <mxPoint x="770" y="115"/>
                         </Array>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="e5_label" value="ARQ" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];labelBackgroundColor=#ffffff;labelBorderColor=#B3B3B3;fontStyle=1;" vertex="1" connectable="0" parent="e5">
-                    <mxGeometry x="0.1" relative="1" as="geometry">
+                <mxCell id="e_api_redis_label" value="ARQ Queue" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];labelBackgroundColor=#ffffff;labelBorderColor=none;fontStyle=1;fontSize=11;" parent="e_api_redis" vertex="1" connectable="0">
+                    <mxGeometry relative="1" as="geometry">
                         <mxPoint as="offset"/>
                     </mxGeometry>
                 </mxCell>
-                
-                <!-- Label Studio to PostgreSQL -->
-                <mxCell id="e6" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;startArrow=none;" edge="1" parent="1" source="label_studio" target="postgresql">
-                    <mxGeometry relative="1" as="geometry"/>
-                </mxCell>
-                
-                <!-- Label Studio to Training Worker (LabelStudioSDK) with Waypoints -->
-                <mxCell id="e7" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;startArrow=none;" edge="1" parent="1" source="label_studio" target="training_worker">
+                <mxCell id="e_api_pg" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=classic;startArrow=classic;strokeWidth=1.5;strokeColor=#d79b00;" parent="1" source="central_api" target="postgresql" edge="1">
                     <mxGeometry relative="1" as="geometry">
                         <Array as="points">
-                            <mxPoint x="600" y="230"/>
-                            <mxPoint x="600" y="440"/>
+                            <mxPoint x="770" y="360"/>
+                            <mxPoint x="770" y="565"/>
                         </Array>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="e7_label" value="LabelStudioSDK" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];labelBackgroundColor=#ffffff;labelBorderColor=#B3B3B3;fontStyle=1;" vertex="1" connectable="0" parent="e7">
-                    <mxGeometry x="-0.1" relative="1" as="geometry">
+                <mxCell id="e_api_pg_label" value="SQL" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];labelBackgroundColor=#ffffff;labelBorderColor=none;fontStyle=1;fontSize=11;" parent="e_api_pg" vertex="1" connectable="0">
+                    <mxGeometry relative="1" as="geometry">
                         <mxPoint as="offset"/>
                     </mxGeometry>
                 </mxCell>
-                
-                <!-- SqlAlchemy to PostgreSQL -->
-                <mxCell id="e8" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;startArrow=none;" edge="1" parent="1" source="sqlalchemy" target="postgresql">
+                <mxCell id="e_redis_job" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=classic;startArrow=classic;strokeWidth=1.5;strokeColor=#b85450;" parent="1" source="redis_server" target="job_worker" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
-                
-                <!-- SqlAlchemy to Job Worker (Bidirectional) -->
-                <mxCell id="e9" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;startArrow=block;" edge="1" parent="1" source="sqlalchemy" target="job_worker">
+                <mxCell id="e_redis_job_label" value="ARQ Queue" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];labelBackgroundColor=#ffffff;labelBorderColor=none;fontStyle=1;fontSize=11;" parent="e_redis_job" vertex="1" connectable="0">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="e_redis_train" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=classic;startArrow=classic;strokeWidth=1.5;strokeColor=#b85450;" parent="1" source="redis_server" target="training_worker" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="825" y="45"/>
+                            <mxPoint x="1335" y="45"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="e_redis_train_label" value="ARQ Queue" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];labelBackgroundColor=#ffffff;labelBorderColor=none;fontStyle=1;fontSize=11;" parent="e_redis_train" vertex="1" connectable="0">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="e_pg_labelstudio" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=classic;startArrow=classic;dashed=1;strokeWidth=1.5;strokeColor=#d79b00;" parent="1" source="postgresql" target="label_studio" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
-                
-                <!-- Training Worker to MinIO -->
-                <mxCell id="e10" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;startArrow=none;" edge="1" parent="1" source="training_worker" target="minio">
-                    <mxGeometry relative="1" as="geometry"/>
+                <mxCell id="e_pg_labelstudio_label" value="SQL" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];labelBackgroundColor=#ffffff;labelBorderColor=none;fontStyle=1;fontSize=11;" parent="e_pg_labelstudio" vertex="1" connectable="0">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
                 </mxCell>
-                
-                <!-- MinIO to Job Worker -->
-                <mxCell id="e11" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;startArrow=none;" edge="1" parent="1" source="minio" target="job_worker">
-                    <mxGeometry relative="1" as="geometry"/>
+                <mxCell id="e_labelstudio_job" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=classic;startArrow=classic;strokeWidth=1.5;strokeColor=#6c8ebf;" parent="1" source="label_studio" target="job_worker" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="1190" y="330"/>
+                            <mxPoint x="1135" y="330"/>
+                        </Array>
+                    </mxGeometry>
                 </mxCell>
-                
-                <!-- Job Worker to Model Storage -->
-                <mxCell id="e12" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;startArrow=none;" edge="1" parent="1" source="job_worker" target="model_storage">
-                    <mxGeometry relative="1" as="geometry"/>
+                <mxCell id="e_labelstudio_job_label" value="LabelStudioSDK" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];labelBackgroundColor=#ffffff;labelBorderColor=none;fontStyle=1;fontSize=11;" parent="e_labelstudio_job" vertex="1" connectable="0">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
                 </mxCell>
-                
-                <!-- MinIO to Model Storage -->
-                <mxCell id="e13" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;startArrow=block;" edge="1" parent="1" source="minio" target="model_storage">
-                    <mxGeometry relative="1" as="geometry"/>
+                <mxCell id="e_labelstudio_train" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=classic;startArrow=classic;strokeWidth=1.5;strokeColor=#6c8ebf;" parent="1" source="label_studio" target="training_worker" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="1270" y="565"/>
+                            <mxPoint x="1335" y="565"/>
+                        </Array>
+                    </mxGeometry>
                 </mxCell>
-                
-                <!-- MinIO to Brains Box -->
-                <mxCell id="e14" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;startArrow=none;" edge="1" parent="1" source="minio" target="brains_box">
-                    <mxGeometry relative="1" as="geometry"/>
+                <mxCell id="e_labelstudio_train_label" value="LabelStudioSDK" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];labelBackgroundColor=#ffffff;labelBorderColor=none;fontStyle=1;fontSize=11;" parent="e_labelstudio_train" vertex="1" connectable="0">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
                 </mxCell>
-                
+                <mxCell id="e_job_brains" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=classic;startArrow=classic;strokeWidth=1.5;strokeColor=#9673a6;" parent="1" source="job_worker" target="brains_box" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="1135" y="220"/>
+                            <mxPoint x="1570" y="220"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="e_job_brains_label" value="HTTP / REST" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];labelBackgroundColor=#ffffff;labelBorderColor=none;fontStyle=1;fontSize=11;" parent="e_job_brains" vertex="1" connectable="0">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="e_train_brains" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=classic;startArrow=classic;strokeWidth=1.5;strokeColor=#9673a6;" parent="1" source="training_worker" target="brains_box" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="1410" y="130"/>
+                            <mxPoint x="1410" y="330"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="e_train_brains_label" value="HTTP / REST" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];labelBackgroundColor=#ffffff;labelBorderColor=none;fontStyle=1;fontSize=11;" parent="e_train_brains" vertex="1" connectable="0">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
+                </mxCell>
             </root>
         </mxGraphModel>
     </diagram>
