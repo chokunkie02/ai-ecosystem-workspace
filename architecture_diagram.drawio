@@ -1,0 +1,95 @@
+<mxfile host="65bd71144e">
+    <diagram id="WTN-A07-Architecture" name="WTN-A07 Trainer Worker Architecture">
+        <mxGraphModel dx="993" dy="924" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1200" pageHeight="700" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="user_icon" value="" style="html=1;verticalLabelPosition=bottom;align=center;labelBackgroundColor=#ffffff;verticalAlign=top;strokeWidth=2;strokeColor=#0080F0;shadow=0;dashed=0;shape=mxgraph.ios7.icons.user;" parent="1" vertex="1">
+                    <mxGeometry x="55" y="220" width="30" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="user_request" value="User / API Request&#xa;(Add train queue time)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#666666;arcSize=40;fontStyle=1;fontSize=12;" parent="1" vertex="1">
+                    <mxGeometry y="260" width="140" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="huggingface" value="Hugging Face&#xa;(Dataset: CoNLL-2003)" style="ellipse;cloud;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;fontSize=12;" parent="1" vertex="1">
+                    <mxGeometry x="720" y="40" width="160" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="fastapi" value="FastAPI Server&#xa;(Port 8000)" style="shape=hexagon;perimeter=hexagonPerimeter2;whiteSpace=wrap;html=1;fixedSize=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontStyle=1;fontSize=13;" parent="1" vertex="1">
+                    <mxGeometry x="270" y="235" width="150" height="100" as="geometry"/>
+                </mxCell>
+                <mxCell id="redis" value="Redis Queue&#xa;(ZADD Scheduled Set)" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#f8cecc;strokeColor=#b85450;fontStyle=1;fontSize=13;" parent="1" vertex="1">
+                    <mxGeometry x="280" y="440" width="130" height="110" as="geometry"/>
+                </mxCell>
+                <mxCell id="minio" value="MinIO Object Storage&#xa;[datasets &amp; models]" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;fontSize=13;" parent="1" vertex="1">
+                    <mxGeometry x="720" y="225" width="160" height="120" as="geometry"/>
+                </mxCell>
+                <mxCell id="trainer_worker_bg2" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" parent="1" vertex="1">
+                    <mxGeometry x="720" y="440" width="170" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="trainer_worker_bg1" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" parent="1" vertex="1">
+                    <mxGeometry x="710" y="450" width="170" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="trainer_worker" value="Trainer Worker (GPU)&#xa;(PyTorch / Transformers)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontStyle=1;fontSize=13;" parent="1" vertex="1">
+                    <mxGeometry x="700" y="460" width="170" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="e_user_fastapi" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=classic;strokeWidth=1.5;strokeColor=#4A90E2;" parent="1" source="user_request" target="fastapi" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e_user_fastapi_label" value="HTTP / REST Request" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];labelBackgroundColor=#ffffff;labelBorderColor=none;fontStyle=1;fontSize=11;" parent="e_user_fastapi" vertex="1" connectable="0">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint y="-25" as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="e_fastapi_redis" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=classic;strokeWidth=1.5;strokeColor=#b85450;" parent="1" source="fastapi" target="redis" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e_fastapi_redis_label" value="ZADD Queue" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];labelBackgroundColor=#ffffff;labelBorderColor=none;fontStyle=1;fontSize=11;" parent="e_fastapi_redis" vertex="1" connectable="0">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="e_hf_minio" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=classic;strokeWidth=1.5;strokeColor=#6c8ebf;" parent="1" source="huggingface" target="minio" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e_hf_minio_label" value="Import Datasets" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];labelBackgroundColor=#ffffff;labelBorderColor=none;fontStyle=1;fontSize=11;" parent="e_hf_minio" vertex="1" connectable="0">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="e_redis_worker" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=classic;strokeWidth=1.5;strokeColor=#b85450;" parent="1" source="redis" target="trainer_worker" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e_redis_worker_label" value="Poll Scheduled Job" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];labelBackgroundColor=#ffffff;labelBorderColor=none;fontStyle=1;fontSize=11;" parent="e_redis_worker" vertex="1" connectable="0">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="e_worker_minio_load" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=classic;strokeWidth=1.5;strokeColor=#82b366;" parent="1" source="trainer_worker" target="minio" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="740" y="420"/>
+                            <mxPoint x="740" y="380"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="e_worker_minio_load_label" value="Load Training Data" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];labelBackgroundColor=#ffffff;labelBorderColor=none;fontStyle=1;fontSize=11;" parent="e_worker_minio_load" vertex="1" connectable="0">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="e_worker_minio_save" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=classic;strokeWidth=1.5;strokeColor=#d79b00;" parent="1" source="trainer_worker" target="minio" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="830" y="420"/>
+                            <mxPoint x="830" y="380"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="e_worker_minio_save_label" value="Save Model &amp; Logs (.tar.gz, .log)" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];labelBackgroundColor=#ffffff;labelBorderColor=none;fontStyle=1;fontSize=11;" parent="e_worker_minio_save" vertex="1" connectable="0">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>

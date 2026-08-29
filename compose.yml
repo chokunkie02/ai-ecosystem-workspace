@@ -78,6 +78,57 @@ services:
     networks:
       - ai_ecosystem_net
 
+  # FastAPI App Service
+  fastapi:
+    build:
+      context: ./fastapi_app
+      dockerfile: Dockerfile
+    container_name: ai_fastapi
+    ports:
+      - "8000:8000"
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - MINIO_ENDPOINT=minio:9000
+      - MINIO_ACCESS_KEY=minioadmin
+      - MINIO_SECRET_KEY=minioadmin
+    depends_on:
+      redis:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+    networks:
+      - ai_ecosystem_net
+    restart: always
+
+  # Trainer Worker Service (GPU)
+  trainer_worker:
+    build:
+      context: ./trainer_worker
+      dockerfile: Dockerfile
+    container_name: ai_trainer_worker
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - MINIO_ENDPOINT=minio:9000
+      - MINIO_ACCESS_KEY=minioadmin
+      - MINIO_SECRET_KEY=minioadmin
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    depends_on:
+      redis:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+    networks:
+      - ai_ecosystem_net
+    restart: always
+
 volumes:
   minio_data:
     driver: local
