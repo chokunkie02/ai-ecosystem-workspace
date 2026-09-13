@@ -79,10 +79,33 @@
 # 1. ติดตั้ง Dependencies และสร้าง Virtual Environment แบบ Workspace
 uv sync
 
-# 2. เปิดใช้งาน Container ทั้งหมด (PostgreSQL, Redis, MinIO, Label Studio)
-docker compose up -d
+# 2. เปิดใช้งาน Container ทั้งหมด (FastAPI, Redis, MinIO, PostgreSQL, MLflow, Inference Worker, Trainer Worker)
+docker compose up -d --build
 ```
 
+---
+
+## 🚀 MLOps Serving, Training Queue & Inference Worker
+
+โปรเจกต์นี้ได้รับการขยายขีดความสามารถเข้าสู่สถาปัตยกรรม **MLOps Production Pipeline**:
+
+1. **FastAPI Serving Gateway (Port 8000)**:
+   - `POST /api/v1/predict`: ส่งข้อความทำนายผล Named Entity Recognition (NER) เข้าคิว Redis แบบ Asynchronous
+   - `GET /api/v1/predict/{job_id}`: ดึงสถานะและผลลัพธ์การทำนาย
+   - `POST /api/v1/train/enqueue`: จัดคิวงานเทรนโมเดลล่วงหน้า (Scheduled Training)
+2. **Inference Worker**:
+   - ดึงงานจาก Redis Queue (`inference_queue` / `inference_jobs_queue`)
+   - โหลดโมเดลจาก MLflow Model Registry หรือ Fallback Base Model
+   - คำนวณผลและจัดเก็บลง Redis (TTL 1 ชั่วโมง)
+3. **MLflow Tracking & Registry (Port 5000)**:
+   - บันทึก Experiment Metrics, Parameters และลงทะเบียน Model Registry
+   - เชื่อมต่อ Backend Store บน **PostgreSQL (Port 5432)**
+   - จัดเก็บ Model Artifacts บน **MinIO Object Storage (Port 9000/9001)**
+
 ### 3. ตรวจสอบสถานะการทำงาน
+- **Swagger Documentation**: เข้าถึงได้ที่ `http://localhost:8000/docs`
+- **MLflow Tracking UI**: เข้าถึงได้ที่ `http://localhost:5000`
+- **MinIO S3 Console**: เข้าถึงได้ที่ `http://localhost:9001` (User: `minioadmin` / Pass: `minioadmin`)
 - **Task Graph Roadmap**: สามารถดูแผนการดำเนินงานและสถานะงานได้ใน [task-graph.md](file:///c:/eco/friday/task-graph.md)
 - **Architecture Spec**: ศึกษาผังและกระบวนการทำงานได้ใน [architecture.md](file:///c:/eco/friday/architecture.md)
+- **Architecture Diagram**: แผนผัง Draw.io อยู่ที่ [architecture_diagram.drawio](file:///c:/eco/friday/architecture_diagram.drawio)

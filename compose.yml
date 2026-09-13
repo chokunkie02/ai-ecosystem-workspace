@@ -78,6 +78,34 @@ services:
     networks:
       - ai_ecosystem_net
 
+  # MLflow Tracking Server Container
+  mlflow:
+    image: ghcr.io/mlflow/mlflow:latest
+    container_name: ai_mlflow
+    command: mlflow server --backend-store-uri postgresql://postgres:postgres@postgres:5432/ai_ecosystem --default-artifact-root s3://mlflow --host 0.0.0.0 --port 5000 --allowed-hosts "*" --cors-allowed-origins "*"
+    ports:
+      - "5000:5000"
+    environment:
+      - MLFLOW_BACKEND_STORE_URI=postgresql://postgres:postgres@postgres:5432/ai_ecosystem
+      - MLFLOW_DEFAULT_ARTIFACT_ROOT=s3://mlflow
+      - AWS_ACCESS_KEY_ID=minioadmin
+      - AWS_SECRET_ACCESS_KEY=minioadmin
+      - MLFLOW_S3_ENDPOINT_URL=http://minio:9000
+      - MLFLOW_S3_IGNORE_TLS=true
+    depends_on:
+      postgres:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "python -c 'import urllib.request; urllib.request.urlopen(\"http://localhost:5000/health\")' || exit 0"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - ai_ecosystem_net
+    restart: always
+
   # FastAPI App Service
   fastapi:
     build:
@@ -92,11 +120,14 @@ services:
       - MINIO_ENDPOINT=minio:9000
       - MINIO_ACCESS_KEY=minioadmin
       - MINIO_SECRET_KEY=minioadmin
+      - MLFLOW_TRACKING_URI=http://mlflow:5000
     depends_on:
       redis:
         condition: service_healthy
       minio:
         condition: service_healthy
+      mlflow:
+        condition: service_started
     networks:
       - ai_ecosystem_net
     restart: always
@@ -113,6 +144,11 @@ services:
       - MINIO_ENDPOINT=minio:9000
       - MINIO_ACCESS_KEY=minioadmin
       - MINIO_SECRET_KEY=minioadmin
+      - MLFLOW_TRACKING_URI=http://mlflow:5000
+      - AWS_ACCESS_KEY_ID=minioadmin
+      - AWS_SECRET_ACCESS_KEY=minioadmin
+      - MLFLOW_S3_ENDPOINT_URL=http://minio:9000
+      - MLFLOW_S3_IGNORE_TLS=true
     deploy:
       resources:
         reservations:
@@ -125,6 +161,33 @@ services:
         condition: service_healthy
       minio:
         condition: service_healthy
+      mlflow:
+        condition: service_started
+    networks:
+      - ai_ecosystem_net
+    restart: always
+
+  # Inference Worker Service
+  inference_worker:
+    build:
+      context: ./inference_worker
+      dockerfile: Dockerfile
+    container_name: ai_inference_worker
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - MLFLOW_TRACKING_URI=http://mlflow:5000
+      - AWS_ACCESS_KEY_ID=minioadmin
+      - AWS_SECRET_ACCESS_KEY=minioadmin
+      - MLFLOW_S3_ENDPOINT_URL=http://minio:9000
+      - MLFLOW_S3_IGNORE_TLS=true
+      - MODEL_NAME=bert-ner
+      - MODEL_STAGE=None
+    depends_on:
+      redis:
+        condition: service_healthy
+      mlflow:
+        condition: service_started
     networks:
       - ai_ecosystem_net
     restart: always

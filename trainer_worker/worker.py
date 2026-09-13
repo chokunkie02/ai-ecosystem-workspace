@@ -69,13 +69,36 @@ def main():
                     minio_client.fget_object(DATASET_BUCKET, dataset_object, local_dataset_path)
                     logger.info(f"Downloaded dataset to {local_dataset_path}")
                     
-                    # 2. Train Model
+                    # 2. Train Model with MLflow Tracking
                     base_model = job_data.get("base_model", "bert-base-cased")
+                    num_epochs = int(job_data.get("epochs", 1))
+                    batch_size = int(job_data.get("batch_size", 8))
+                    learning_rate = float(job_data.get("learning_rate", 5e-5))
+                    experiment_name = job_data.get("experiment_name", "bert-ner-training")
+                    registered_model_name = job_data.get("registered_model_name", "bert-ner")
                     output_dir = f"./output_{job_id}"
-                    logger.info(f"Initiating model training with base model '{base_model}'...")
-                    run_training(local_dataset_path, base_model, output_dir, logger)
                     
-                    # 3. Save Model to MinIO
+                    logger.info(f"Initiating model training with base model '{base_model}'...")
+                    train_info = run_training(
+                        dataset_path=local_dataset_path,
+                        base_model_name=base_model,
+                        output_dir=output_dir,
+                        logger=logger,
+                        num_epochs=num_epochs,
+                        batch_size=batch_size,
+                        learning_rate=learning_rate,
+                        experiment_name=experiment_name,
+                        registered_model_name=registered_model_name,
+                    )
+                    
+                    run_id = train_info.get("run_id") if isinstance(train_info, dict) else None
+                    model_uri = train_info.get("model_uri") if isinstance(train_info, dict) else None
+                    reg_name = train_info.get("registered_model_name", registered_model_name) if isinstance(train_info, dict) else registered_model_name
+                    metrics = train_info.get("metrics", {}) if isinstance(train_info, dict) else {}
+                    
+                    logger.info(f"Training completed. MLflow Run ID: {run_id}, Model URI: {model_uri}")
+                    
+                    # 3. Save Model Archive to MinIO (Backup/Artifact)
                     minio_model_name = f"model_{job_id}_bert_token_cls.tar.gz"
                     tar_path = f"./{minio_model_name}"
                     os.system(f"tar -czf {tar_path} -C {output_dir} .")
@@ -86,6 +109,20 @@ def main():
                     # 4. Upload Log File to MinIO
                     logger.info(f"Uploading log file {log_file} to MinIO bucket '{MODEL_BUCKET}'...")
                     minio_client.fput_object(MODEL_BUCKET, log_file, log_file)
+                    
+                    # 5. Store Latest Model Discovery Metadata in Redis for Inference Worker
+                    latest_model_payload = {
+                        "job_id": job_id,
+                        "run_id": run_id,
+                        "model_name": reg_name,
+                        "model_uri": model_uri,
+                        "registered_model_name": reg_name,
+                        "minio_tar": minio_model_name,
+                        "metrics": metrics,
+                        "updated_at": time.time(),
+                    }
+                    redis_client.set("latest_model_info", json.dumps(latest_model_payload))
+                    logger.info(f"Updated Redis key 'latest_model_info': {latest_model_payload}")
                     
                     logger.info(f"== Job {job_id} Completed Successfully ==")
             else:
