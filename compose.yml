@@ -183,6 +183,7 @@ services:
       - MLFLOW_S3_IGNORE_TLS=true
       - MODEL_NAME=bert-ner
       - MODEL_STAGE=None
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://otel-collector:4317
     depends_on:
       redis:
         condition: service_healthy
@@ -192,6 +193,76 @@ services:
       - ai_ecosystem_net
     restart: always
 
+  # Observability - OpenTelemetry Collector
+  otel-collector:
+    image: otel/opentelemetry-collector-contrib:latest
+    container_name: ai_otel_collector
+    command: ["--config=/etc/otel-collector-config.yaml"]
+    volumes:
+      - ./observability/otel-collector-config.yaml:/etc/otel-collector-config.yaml
+    ports:
+      - "4317:4317" # OTLP gRPC
+      - "4318:4318" # OTLP HTTP
+      - "8889:8889" # Prometheus metrics
+    networks:
+      - ai_ecosystem_net
+
+  # Observability - Prometheus
+  prometheus:
+    image: prom/prometheus:v2.52.0
+    container_name: ai_prometheus
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --enable-feature=exemplar-storage
+    volumes:
+      - ./observability/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
+    ports:
+      - "9090:9090"
+    networks:
+      - ai_ecosystem_net
+
+  # Observability - Loki
+  loki:
+    image: grafana/loki:3.0.0
+    container_name: ai_loki
+    command: -config.file=/etc/loki/local-config.yaml
+    volumes:
+      - ./observability/loki-config.yaml:/etc/loki/local-config.yaml
+      - loki_data:/loki
+    ports:
+      - "3100:3100"
+    networks:
+      - ai_ecosystem_net
+
+  # Observability - Tempo
+  tempo:
+    image: grafana/tempo:2.4.1
+    container_name: ai_tempo
+    command: ["-config.file=/etc/tempo.yaml"]
+    volumes:
+      - ./observability/tempo.yaml:/etc/tempo.yaml
+      - tempo_data:/tmp/tempo
+    ports:
+      - "3200:3200"
+    networks:
+      - ai_ecosystem_net
+
+  # Observability - Grafana
+  grafana:
+    image: grafana/grafana:11.0.0
+    container_name: ai_grafana
+    environment:
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
+      - GF_AUTH_DISABLE_LOGIN_FORM=true
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana_data:/var/lib/grafana
+    networks:
+      - ai_ecosystem_net
+
 volumes:
   minio_data:
     driver: local
@@ -200,6 +271,14 @@ volumes:
   label_studio_data:
     driver: local
   postgres_data:
+    driver: local
+  prometheus_data:
+    driver: local
+  loki_data:
+    driver: local
+  tempo_data:
+    driver: local
+  grafana_data:
     driver: local
 
 networks:

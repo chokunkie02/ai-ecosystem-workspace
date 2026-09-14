@@ -4,6 +4,7 @@ import json
 import logging
 import redis
 from transformers import pipeline
+from telemetry import setup_telemetry
 
 # Configure Logging
 logging.basicConfig(
@@ -12,6 +13,18 @@ logging.basicConfig(
     handlers=[logging.StreamHandler()]
 )
 logger = logging.getLogger("InferenceWorker")
+
+# Initialize OTel
+tracer, meter = setup_telemetry("ai-inference-worker")
+inference_duration_metric = meter.create_histogram(
+    name="inference_duration_ms",
+    description="Duration of inference execution in milliseconds",
+    unit="ms",
+)
+inference_counter_metric = meter.create_counter(
+    name="inference_requests_total",
+    description="Total number of inference requests processed",
+)
 
 # Environment Configurations
 REDIS_HOST = os.getenv("REDIS_HOST", "localhost")
@@ -210,82 +223,97 @@ def process_inference_job(raw_job_payload: str):
     """
     Process an individual prediction task popped from Redis.
     """
-    try:
-        job_data = json.loads(raw_job_payload)
-    except Exception as parse_err:
-        logger.error(f"Failed to parse job JSON: {parse_err}")
-        return
-
-    job_id = job_data.get("job_id", f"job_{int(time.time()*1000)}")
-    text = job_data.get("text", "")
-
-    print(f"[Inference Worker] Processing job {job_id}...")
-    start_time = time.time()
-
-    # 1. Update job status to PROCESSING
-    try:
-        redis_client.set(f"job:{job_id}:status", "PROCESSING", ex=RESULT_TTL)
-        redis_client.set(
-            f"predict_job:{job_id}",
-            json.dumps({
-                "job_id": job_id,
-                "status": "PROCESSING",
-                "text": text,
-                "started_at": start_time,
-            }),
-            ex=RESULT_TTL,
-        )
-    except Exception as redis_err:
-        logger.warning(f"Failed to record PROCESSING status for job {job_id}: {redis_err}")
-
-    # 2. Run Inference
-    try:
-        entities = execute_inference(text)
-        latency_ms = round((time.time() - start_time) * 1000, 2)
-
-        result_payload = {
-            "job_id": job_id,
-            "text": text,
-            "entities": entities,
-            "model_source": current_model_source,
-            "latency_ms": latency_ms,
-        }
-
-        # 3. Store Result and COMPLETED status in Redis
-        redis_client.set(f"job:{job_id}:result", json.dumps(result_payload), ex=RESULT_TTL)
-        redis_client.set(f"job:{job_id}:status", "COMPLETED", ex=RESULT_TTL)
-        redis_client.set(
-            f"predict_job:{job_id}",
-            json.dumps({
-                "job_id": job_id,
-                "status": "COMPLETED",
-                "result": result_payload,
-                "latency_ms": latency_ms,
-                "completed_at": time.time(),
-            }),
-            ex=RESULT_TTL,
-        )
-
-        print(f"[Inference Worker] Processing job {job_id}... Done")
-        logger.info(f"Job {job_id} completed in {latency_ms}ms with {len(entities)} entities detected.")
-
-    except Exception as infer_err:
-        logger.error(f"[Inference Worker] Error processing job {job_id}: {infer_err}")
+    with tracer.start_as_current_span("process_inference_job") as span:
         try:
-            redis_client.set(f"job:{job_id}:status", "FAILED", ex=RESULT_TTL)
-            redis_client.set(f"job:{job_id}:error", str(infer_err), ex=RESULT_TTL)
+            job_data = json.loads(raw_job_payload)
+        except Exception as parse_err:
+            logger.error(f"Failed to parse job JSON: {parse_err}")
+            span.record_exception(parse_err)
+            return
+
+        job_id = job_data.get("job_id", f"job_{int(time.time()*1000)}")
+        text = job_data.get("text", "")
+        span.set_attribute("job_id", job_id)
+        span.set_attribute("text_length", len(text))
+
+        print(f"[Inference Worker] Processing job {job_id}...")
+        start_time = time.time()
+
+        # 1. Update job status to PROCESSING
+        try:
+            redis_client.set(f"job:{job_id}:status", "PROCESSING", ex=RESULT_TTL)
             redis_client.set(
                 f"predict_job:{job_id}",
                 json.dumps({
                     "job_id": job_id,
-                    "status": "FAILED",
-                    "error": str(infer_err),
-                    "failed_at": time.time(),
+                    "status": "PROCESSING",
+                    "text": text,
+                    "started_at": start_time,
                 }),
                 ex=RESULT_TTL,
             )
         except Exception as redis_err:
-            logger.error(f"Failed to write failure status to Redis for job {job_id}: {redis_err}")
+            logger.warning(f"Failed to record PROCESSING status for job {job_id}: {redis_err}")
+            span.record_exception(redis_err)
+
+        # 2. Run Inference
+        try:
+            with tracer.start_as_current_span("execute_inference") as model_span:
+                model_span.set_attribute("model_source", current_model_source)
+                entities = execute_inference(text)
+                model_span.set_attribute("entity_count", len(entities))
+            
+            latency_ms = round((time.time() - start_time) * 1000, 2)
+            
+            # Record Metrics
+            inference_duration_metric.record(latency_ms, {"model": current_model_source})
+            inference_counter_metric.add(1, {"status": "success", "model": current_model_source})
+
+            result_payload = {
+                "job_id": job_id,
+                "text": text,
+                "entities": entities,
+                "model_source": current_model_source,
+                "latency_ms": latency_ms,
+            }
+
+            # 3. Store Result and COMPLETED status in Redis
+            redis_client.set(f"job:{job_id}:result", json.dumps(result_payload), ex=RESULT_TTL)
+            redis_client.set(f"job:{job_id}:status", "COMPLETED", ex=RESULT_TTL)
+            redis_client.set(
+                f"predict_job:{job_id}",
+                json.dumps({
+                    "job_id": job_id,
+                    "status": "COMPLETED",
+                    "result": result_payload,
+                    "latency_ms": latency_ms,
+                    "completed_at": time.time(),
+                }),
+                ex=RESULT_TTL,
+            )
+
+            print(f"[Inference Worker] Processing job {job_id}... Done")
+            logger.info(f"Job {job_id} completed in {latency_ms}ms with {len(entities)} entities detected.")
+
+        except Exception as infer_err:
+            logger.error(f"[Inference Worker] Error processing job {job_id}: {infer_err}")
+            span.record_exception(infer_err)
+            inference_counter_metric.add(1, {"status": "error", "model": current_model_source})
+            try:
+                redis_client.set(f"job:{job_id}:status", "FAILED", ex=RESULT_TTL)
+                redis_client.set(f"job:{job_id}:error", str(infer_err), ex=RESULT_TTL)
+                redis_client.set(
+                    f"predict_job:{job_id}",
+                    json.dumps({
+                        "job_id": job_id,
+                        "status": "FAILED",
+                        "error": str(infer_err),
+                        "failed_at": time.time(),
+                    }),
+                    ex=RESULT_TTL,
+                )
+            except Exception as redis_err:
+                logger.error(f"Failed to write failure status to Redis for job {job_id}: {redis_err}")
 
 
 def main():
